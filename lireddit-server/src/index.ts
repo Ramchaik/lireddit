@@ -1,6 +1,7 @@
 import { MikroORM } from '@mikro-orm/core';
 import { ApolloServer } from 'apollo-server-express';
 import express from 'express';
+import 'reflect-metadata';
 import { buildSchema } from 'type-graphql';
 import mikroConfig from './mikro-orm.config';
 import { HelloResolver } from './resolvers/hello';
