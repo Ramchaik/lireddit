@@ -1,3 +1,4 @@
+import { EntityManager } from "@mikro-orm/postgresql";
 import argon2 from "argon2";
 import { MyContext } from "src/types";
 import {
@@ -80,13 +81,20 @@ export class UserResolver {
     }
 
     const hashedPassword = await argon2.hash(password);
-    const user = em.create(User, { username, password: hashedPassword });
+    let user = null;
 
     try {
-      await em.persistAndFlush(user);
+      [user] = await (em as EntityManager)
+        .createQueryBuilder(User)
+        .getKnexQuery()
+        .insert({
+          username,
+          password: hashedPassword,
+          created_at: new Date(),
+          updated_at: new Date(),
+        })
+        .returning("*");
     } catch (error) {
-      console.log(error);
-
       // duplicate username error
       if (error.code === "23505") {
         return {
