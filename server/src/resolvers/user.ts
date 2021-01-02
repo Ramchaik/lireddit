@@ -4,7 +4,6 @@ import {
   Arg,
   Ctx,
   Field,
-  InputType,
   Mutation,
   ObjectType,
   Query,
@@ -13,15 +12,8 @@ import {
 import { COOKIE_NAME } from "../constants";
 import { User } from "../entities/User";
 import { MyContext } from "../types";
-
-@InputType()
-class UsernamePasswordInput {
-  @Field()
-  username: string;
-
-  @Field()
-  password: string;
-}
+import { validateRegister } from "../utils/validateRegister";
+import { UsernamePasswordInput } from "./UsernamePasswordInput";
 
 @ObjectType()
 class FieldError {
@@ -55,31 +47,15 @@ export class UserResolver {
 
   @Mutation(() => UserResponse)
   async register(
-    @Arg("options") opitons: UsernamePasswordInput,
+    @Arg("options") options: UsernamePasswordInput,
     @Ctx() { req, em }: MyContext
   ) {
-    const { username, password } = opitons;
-    if (username.length <= 2) {
-      return {
-        errors: [
-          {
-            field: "username",
-            message: "length must be greater than 2",
-          },
-        ],
-      };
+    const errors = validateRegister(options);
+    if (errors) {
+      return { errors };
     }
 
-    if (password.length <= 2) {
-      return {
-        errors: [
-          {
-            field: "password",
-            message: "length must be greater than 2",
-          },
-        ],
-      };
-    }
+    const { email, username, password } = options;
 
     const hashedPassword = await argon2.hash(password);
     let user = null;
@@ -89,6 +65,7 @@ export class UserResolver {
         .createQueryBuilder(User)
         .getKnexQuery()
         .insert({
+          email,
           username,
           password: hashedPassword,
           created_at: new Date(),
@@ -116,17 +93,20 @@ export class UserResolver {
 
   @Mutation(() => UserResponse)
   async login(
-    @Arg("options") opitons: UsernamePasswordInput,
+    @Arg("usernameOrEmail") usernameOrEmail: string,
+    @Arg("password") password: string,
     @Ctx() { em, req }: MyContext
   ): Promise<UserResponse> {
-    const { username, password } = opitons;
-    const user = await em.findOne(User, { username });
+    const queryObj = {
+      [usernameOrEmail.includes("@") ? "email" : "username"]: usernameOrEmail,
+    };
 
+    const user = await em.findOne(User, queryObj);
     if (!user) {
       return {
         errors: [
           {
-            field: "username",
+            field: "usernameOrEmail",
             message: "Invalid login details",
           },
         ],
