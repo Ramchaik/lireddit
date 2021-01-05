@@ -28,6 +28,13 @@ const Login: React.FC<registerProps> = ({}) => {
           }
 
           if (response.data?.login.user) {
+            const nextPage = router.query.next;
+
+            if (typeof nextPage === "string") {
+              router.push(nextPage);
+              return;
+            }
+
             router.push("/");
           }
         }}
