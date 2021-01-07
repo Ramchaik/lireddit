@@ -3,7 +3,7 @@ import React from "react";
 
 export const ShowMessage: React.FC<{ message?: string }> = ({ message }) => {
   return (
-    <Box mt="10%" ml="50%">
+    <Box mt="10%" ml="35%">
       {message || "Loading..."}
     </Box>
   );
