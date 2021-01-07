@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import React from "react";
 import { InputField } from "../components/InputField";
 import { Layout } from "../components/Layout";
-import { Loader } from "../components/Loader";
+import { ShowMessage } from "../components/ShowMessage";
 import { useCreatePostMutation, useMeQuery } from "../generated/graphql";
 import { createUrqlClient } from "../utils/createUrqlClient";
 import { useIsAuth } from "../utils/useIsAuth";
@@ -18,7 +18,7 @@ export const CreatePost: React.FC<{}> = ({}) => {
   const [, createPost] = useCreatePostMutation();
 
   return fetching || !data?.me ? (
-    <Loader />
+    <ShowMessage />
   ) : (
     <Layout varient="small">
       <Formik
