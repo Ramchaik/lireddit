@@ -14,6 +14,7 @@ import {
 } from "type-graphql";
 import { getConnection } from "typeorm";
 import { Post } from "../entities/Post";
+import { Updoot } from "../entities/Updoot";
 import { isAuth } from "../middleware/isAuth";
 import { MyContext } from "../types";
 
@@ -50,20 +51,48 @@ export class PostResolver {
     const isUpdoot = value !== -1;
     const realValue = isUpdoot ? 1 : -1;
 
-    await getConnection().query(
-      `
-      START TRANSACTION;
+    const updoot = await Updoot.findOne({ where: { postId, userId } });
 
-      insert into updoot ("userId", "postId", value)
-      values (${userId}, ${postId}, ${realValue});
+    if (updoot && updoot.value !== realValue) {
+      await getConnection().transaction(async (tn) => {
+        await tn.query(
+          `
+          update updoot
+          set value = $1
+          where "postId" = $2 and "userId" = $3;
+        `,
+          [realValue, postId, userId]
+        );
 
-      update post
-      set points = points + ${realValue}
-      where id = ${postId};
+        await tn.query(
+          `
+          update post
+          set points = points + $1
+          where id = $2;
+        `,
+          [2 * realValue, postId]
+        );
+      });
+    } else if (!updoot) {
+      await getConnection().transaction(async (tn) => {
+        await tn.query(
+          `
+          insert into updoot ("userId", "postId", value)
+          values ($1, $2, $3);
+        `,
+          [userId, postId, realValue]
+        );
 
-      COMMIT;
-      `
-    );
+        await tn.query(
+          `
+          update post
+          set points = points + $1
+          where id = $2;
+        `,
+          [realValue, postId]
+        );
+      });
+    }
 
     return true;
   }
