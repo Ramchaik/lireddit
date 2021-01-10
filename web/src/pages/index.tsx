@@ -1,10 +1,8 @@
-import { ArrowDownIcon, ArrowUpIcon } from "@chakra-ui/icons";
 import {
   Box,
   Button,
   Flex,
   Heading,
-  IconButton,
   Link,
   Stack,
   Text,
@@ -26,7 +24,6 @@ const Index = () => {
   const [{ data, fetching }] = usePostsQuery({
     variables,
   });
-  console.log("data(landing): ", data);
 
   if (!fetching && !data) {
     return (
