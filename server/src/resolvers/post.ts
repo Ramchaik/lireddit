@@ -177,11 +177,22 @@ export class PostResolver {
   }
 
   @Mutation(() => Boolean)
-  async deletePost(@Arg("id") id: number): Promise<Boolean> {
+  @UseMiddleware(isAuth)
+  async deletePost(
+    @Arg("id", () => Int) id: number,
+    @Ctx() { req }: MyContext
+  ): Promise<Boolean> {
     try {
-      Post.delete(id);
+      await getConnection().transaction(async (txn) => {
+        await txn.query(`DELETE FROM "updoot" WHERE "postId" = $1`, [id]);
+        await txn.query(
+          `DELETE FROM "post" WHERE "id" = $1 AND "creatorId" = $2`,
+          [id, req.session.userId]
+        );
+      });
       return true;
     } catch (error) {
+      console.error(error);
       return false;
     }
   }
