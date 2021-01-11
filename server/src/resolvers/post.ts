@@ -183,13 +183,22 @@ export class PostResolver {
     @Ctx() { req }: MyContext
   ): Promise<Boolean> {
     try {
-      await getConnection().transaction(async (txn) => {
-        await txn.query(`DELETE FROM "updoot" WHERE "postId" = $1`, [id]);
-        await txn.query(
-          `DELETE FROM "post" WHERE "id" = $1 AND "creatorId" = $2`,
-          [id, req.session.userId]
-        );
-      });
+      /*
+      // not cascade way
+      const post = await Post.findOne(id);
+      if (!post) {
+        return false;
+      }
+      if (post.creatorId !== req.session.userId) {
+        throw new Error("Not authorized");
+      }
+
+      await Updoot.delete({ postId: id });
+      await Post.delete(id);
+      */
+
+      // cascade way: need to update table connected with foreign key constraint, onDelete to cascade
+      await Post.delete({ id, creatorId: req.session.userId });
       return true;
     } catch (error) {
       console.error(error);
