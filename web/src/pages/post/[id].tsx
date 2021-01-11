@@ -1,6 +1,5 @@
 import { Heading } from "@chakra-ui/react";
 import { withUrqlClient } from "next-urql";
-import { route } from "next/dist/next-server/server/router";
 import { useRouter } from "next/router";
 import React from "react";
 import { Layout } from "../../components/Layout";
