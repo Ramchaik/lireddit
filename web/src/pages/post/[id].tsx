@@ -1,19 +1,16 @@
 import { Heading } from "@chakra-ui/react";
 import { withUrqlClient } from "next-urql";
-import { useRouter } from "next/router";
 import React from "react";
 import { Layout } from "../../components/Layout";
-import { ShowMessage } from "../../components/ShowMessage";
 import { usePostQuery } from "../../generated/graphql";
 import { createUrqlClient } from "../../utils/createUrqlClient";
+import { getErrorMessageForPost } from "../../utils/getErrorMessageForPost";
+import { useGetIntId } from "../../utils/useGetIntId";
 
 interface PostProps {}
 
 export const Post: React.FC<PostProps> = ({}) => {
-  const router = useRouter();
-  const id = router.query.id;
-  const intId = typeof id === "string" ? parseInt(id) : -1;
-
+  const intId = useGetIntId();
   const [{ data, fetching, error }] = usePostQuery({
     pause: intId === -1,
     variables: {
@@ -21,28 +18,14 @@ export const Post: React.FC<PostProps> = ({}) => {
     },
   });
 
-  if (fetching) {
-    return (
-      <Layout>
-        <ShowMessage />
-      </Layout>
-    );
-  }
+  const errorMessage = getErrorMessageForPost({
+    data,
+    fetching,
+    error,
+  });
 
-  if (error) {
-    return (
-      <Layout>
-        <ShowMessage message={error.message} />
-      </Layout>
-    );
-  }
-
-  if (!data?.post) {
-    return (
-      <Layout>
-        <ShowMessage message="Could not find post" />
-      </Layout>
-    );
+  if (errorMessage) {
+    return <Layout>{errorMessage}</Layout>;
   }
 
   return (
