@@ -2,16 +2,23 @@ import { DeleteIcon, EditIcon } from "@chakra-ui/icons";
 import { IconButton, Link } from "@chakra-ui/react";
 import NextLink from "next/link";
 import React from "react";
-import { useDeletePostMutation } from "../generated/graphql";
+import { useDeletePostMutation, useMeQuery } from "../generated/graphql";
 
 interface EditDeletePostButtonProps {
   id: number;
+  creatorId: number;
 }
 
 export const EditDeletePostButton: React.FC<EditDeletePostButtonProps> = ({
   id,
+  creatorId,
 }) => {
   const [, deletePost] = useDeletePostMutation();
+  const [{ data: meData }] = useMeQuery();
+
+  if (meData?.me?.id !== creatorId) {
+    return null;
+  }
 
   return (
     <>
