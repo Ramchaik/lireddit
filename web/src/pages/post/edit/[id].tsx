@@ -47,7 +47,7 @@ export const EditPost: React.FC<{}> = ({}) => {
               title,
               text,
             });
-            router.push("/");
+            router.back();
           }
         }}
       >
