@@ -14,7 +14,7 @@ import { EditDeletePostButton } from "../components/EditDeletePostButton";
 import { Layout } from "../components/Layout";
 import { ShowMessage } from "../components/ShowMessage";
 import { UpdootSection } from "../components/UpdootSection";
-import { useMeQuery, usePostsQuery } from "../generated/graphql";
+import { usePostsQuery } from "../generated/graphql";
 import { createUrqlClient } from "../utils/createUrqlClient";
 
 const Index = () => {
@@ -22,7 +22,6 @@ const Index = () => {
     limit: 15,
     cursor: null as null | string,
   });
-  const [{ data: meData }] = useMeQuery();
   const [{ data, fetching }] = usePostsQuery({
     variables,
   });
@@ -53,11 +52,9 @@ const Index = () => {
                   <Text flex={1} mt={4}>
                     {p.textSnippet}
                   </Text>
-                  {meData?.me?.id === p.creator.id && (
-                    <Box ml="auto">
-                      <EditDeletePostButton id={p.id} />
-                    </Box>
-                  )}
+                  <Box ml="auto">
+                    <EditDeletePostButton id={p.id} creatorId={p.creator.id} />
+                  </Box>
                 </Flex>
               </Box>
             </Flex>
