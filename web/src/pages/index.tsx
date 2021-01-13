@@ -22,13 +22,17 @@ const Index = () => {
     limit: 15,
     cursor: null as null | string,
   });
-  const [{ data, fetching }] = usePostsQuery({
+  const [{ data, error, fetching }] = usePostsQuery({
     variables,
   });
 
   if (!fetching && !data) {
     return (
-      <ShowMessage message="You got no posts, query failed, please refresh and retry" />
+      <ShowMessage
+        message={`You got no posts, query failed, please refresh and retry, error: ${
+          error && error.message
+        }`}
+      />
     );
   }
 
