@@ -17,11 +17,6 @@ import { PostResolver } from "./resolvers/post";
 import { UserResolver } from "./resolvers/user";
 import { MyContext } from "./types";
 import { createUserLoader } from "./utils/createUserLoader";
-declare module "express-session" {
-  export interface SessionData {
-    userId: number;
-  }
-}
 
 const main = async () => {
   const conn = await createConnection({
