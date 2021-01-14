@@ -11,6 +11,7 @@ interface UpdootKey {
   postId: number;
   userId: number;
 }
+type UpdootIdsToUpdootT = Record<string, Updoot>;
 
 export const createUpdootLoader = () =>
   new DataLoader<
@@ -33,12 +34,12 @@ export const createUpdootLoader = () =>
       `SELECT * FROM updoot WHERE ("postId", "userId") IN (${compositeKeys});`
     );
     const getKey = (u: UpdootKey): string => `${u.userId}|${u.postId}`;
-    const updootIdsToUpdoot: Record<string, Updoot> = updoots.reduce(
-      (updootIdsToUpdoot: Record<string, Updoot>, updoot: Updoot) => {
+    const updootIdsToUpdoot: UpdootIdsToUpdootT = updoots.reduce(
+      (updootIdsToUpdoot: UpdootIdsToUpdootT, updoot: Updoot) => {
         updootIdsToUpdoot[getKey(updoot)] = updoot;
         return updootIdsToUpdoot;
       },
-      {} as Record<string, Updoot>
+      {} as UpdootIdsToUpdootT
     );
     return keys.map((k) => updootIdsToUpdoot[getKey(k)]);
   });
