@@ -25,18 +25,18 @@ const main = async () => {
     type: "postgres",
     url: process.env.DATABASE_URL,
     logging: true,
-    synchronize: true,
+    // synchronize: true,
     migrations: [path.join(__dirname, "./migrations/*")],
     entities: [Post, User, Updoot],
   });
   await conn.runMigrations();
 
-  // await Post.delete({});
-
   const app = express();
 
   const RedisStore = connectRedis(session);
   const redis = new Redis(process.env.REDIS_URL);
+  // for nginx proxy, so cookies/sessions work
+  //app.set("proxy", 1);
 
   app.use(
     cors({
