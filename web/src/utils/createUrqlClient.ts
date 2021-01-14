@@ -135,8 +135,7 @@ export const createUrqlClient = (ssrExchange: any, ctx: any) => {
               }
             },
             createPost: (_result, _args, cache, info) => {
-              const { parentKey: entityKey } = info;
-              const allFields = cache.inspectFields(entityKey);
+              const allFields = cache.inspectFields("Query");
               const fieldInfos = allFields.filter(
                 (info) => info.fieldName === "posts"
               );
