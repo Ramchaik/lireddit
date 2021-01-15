@@ -36,7 +36,7 @@ const main = async () => {
   const RedisStore = connectRedis(session);
   const redis = new Redis(process.env.REDIS_URL);
   // for nginx proxy, so cookies/sessions work
-  //app.set("proxy", 1);
+  //app.set("trust proxy", 1);
 
   app.use(
     cors({
