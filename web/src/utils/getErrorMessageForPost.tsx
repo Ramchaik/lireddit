@@ -1,10 +1,10 @@
+import { ApolloError } from "@apollo/client";
 import React from "react";
-import { CombinedError } from "urql";
 import { ShowMessage } from "../components/ShowMessage";
 
 interface getErrorMessageForPostParams {
   fetching: boolean;
-  error?: CombinedError;
+  error?: ApolloError;
   data: any;
 }
 
