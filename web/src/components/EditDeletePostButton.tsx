@@ -36,7 +36,12 @@ export const EditDeletePostButton: React.FC<EditDeletePostButtonProps> = ({
         bgColor="lightgray"
         icon={<DeleteIcon />}
         onClick={() => {
-          deletePost({ variables: { id } });
+          deletePost({
+            variables: { id },
+            update: (cache) => {
+              cache.evict({ id: "Post:" + id });
+            },
+          });
         }}
       />
     </>

@@ -13,6 +13,7 @@ export const NavBar: React.FC<NavBarProps> = ({}) => {
   const { data, loading } = useMeQuery({
     skip: isServerSide(),
   });
+
   let body = null;
 
   // data is loading
