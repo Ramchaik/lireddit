@@ -7,13 +7,14 @@ import {
   Stack,
   Text,
 } from "@chakra-ui/react";
+import { withApollo } from "../utils/withApollo";
 import NextLink from "next/link";
 import React from "react";
 import { EditDeletePostButton } from "../components/EditDeletePostButton";
 import { Layout } from "../components/Layout";
 import { ShowMessage } from "../components/ShowMessage";
 import { UpdootSection } from "../components/UpdootSection";
-import { PostsQuery, usePostsQuery } from "../generated/graphql";
+import { usePostsQuery } from "../generated/graphql";
 
 const Index = () => {
   const { data, error, loading, fetchMore, variables } = usePostsQuery({
@@ -73,23 +74,6 @@ const Index = () => {
                   cursor:
                     data.posts.posts[data.posts.posts.length - 1].createdAt,
                 },
-                // updateQuery: (prevValues, { fetchMoreResult }): PostsQuery => {
-                //   if (!fetchMoreResult) {
-                //     return prevValues as PostsQuery;
-                //   }
-
-                //   return {
-                //     __typename: "Query",
-                //     posts: {
-                //       __typename: "PaginatedPosts",
-                //       hasMore: (fetchMoreResult as PostsQuery).posts.hasMore,
-                //       posts: [
-                //         ...(prevValues as PostsQuery).posts.posts,
-                //         ...(fetchMoreResult as PostsQuery).posts.posts,
-                //       ],
-                //     },
-                //   };
-                // },
               })
             }
             isLoading={loading}
@@ -104,4 +88,4 @@ const Index = () => {
   );
 };
 
-export default Index;
+export default withApollo({ ssr: true })(Index);

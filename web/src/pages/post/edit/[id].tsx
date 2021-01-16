@@ -10,6 +10,7 @@ import {
 } from "../../../generated/graphql";
 import { getErrorMessageForPost } from "../../../utils/getErrorMessageForPost";
 import { useGetIntId } from "../../../utils/useGetIntId";
+import { withApollo } from "../../../utils/withApollo";
 
 export const EditPost: React.FC<{}> = ({}) => {
   const router = useRouter();
@@ -77,4 +78,4 @@ export const EditPost: React.FC<{}> = ({}) => {
   );
 };
 
-export default EditPost;
+export default withApollo({ ssr: false })(EditPost);

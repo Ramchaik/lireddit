@@ -5,6 +5,7 @@ import { Layout } from "../../components/Layout";
 import { usePostQuery } from "../../generated/graphql";
 import { getErrorMessageForPost } from "../../utils/getErrorMessageForPost";
 import { useGetIntId } from "../../utils/useGetIntId";
+import { withApollo } from "../../utils/withApollo";
 
 interface PostProps {}
 
@@ -39,4 +40,4 @@ export const Post: React.FC<PostProps> = ({}) => {
   );
 };
 
-export default Post;
+export default withApollo({ ssr: true })(Post);

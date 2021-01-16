@@ -7,6 +7,7 @@ import { Layout } from "../components/Layout";
 import { ShowMessage } from "../components/ShowMessage";
 import { useCreatePostMutation, useMeQuery } from "../generated/graphql";
 import { useIsAuth } from "../utils/useIsAuth";
+import { withApollo } from "../utils/withApollo";
 
 export const CreatePost: React.FC<{}> = ({}) => {
   const { data, loading } = useMeQuery();
@@ -54,4 +55,4 @@ export const CreatePost: React.FC<{}> = ({}) => {
   );
 };
 
-export default CreatePost;
+export default withApollo({ ssr: false })(CreatePost);
